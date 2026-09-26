@@ -4,12 +4,16 @@
   "description": "SkillSangam — AI-Powered Skill-Based Team Formation Platform",
   "main": "server/server.js",
   "type": "module",
+  "workspaces": [
+    "client"
+  ],
   "scripts": {
     "start": "node server/server.js",
     "server": "node server/server.js",
     "client": "npm --prefix client run dev",
     "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"node server/server.js\" \"npm --prefix client run dev\"",
-    "build": "npm --prefix client run build",
+    "build": "npm --prefix client install --include=dev && npm --prefix client run build",
+    "postinstall": "npm --prefix client install --include=dev",
     "seed": "node server/db/seed.js",
     "test": "node --test"
   },

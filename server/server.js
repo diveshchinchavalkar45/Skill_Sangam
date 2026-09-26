@@ -137,18 +137,46 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Bootstrap Server & Database
-async function startServer() {
+// Database Initialization & Ready State
+let dbInitialized = false;
+let dbInitPromise = null;
+
+export async function ensureDbReady() {
+  if (dbInitialized) return;
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      await initDb();
+      const usersCount = await query('SELECT COUNT(*) FROM users');
+      if (Number(usersCount.rows[0].count) === 0) {
+        console.log('Database is empty. Automatically running seed script...');
+        await seed();
+      }
+      dbInitialized = true;
+    })();
+  }
+  return dbInitPromise;
+}
+
+// Middleware to ensure DB is initialized before handling requests
+app.use(async (req, res, next) => {
   try {
-    await initDb();
+    await ensureDbReady();
+    next();
+  } catch (err) {
+    console.error('Database initialization error:', err);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'DB_INIT_ERROR',
+        message: 'Failed to initialize database: ' + err.message
+      }
+    });
+  }
+});
 
-    // Check if seeding is needed
-    const usersCount = await query('SELECT COUNT(*) FROM users');
-    if (Number(usersCount.rows[0].count) === 0) {
-      console.log('Database is empty. Automatically running seed script...');
-      await seed();
-    }
-
+// Bootstrap Server for non-serverless environments
+if (!process.env.VERCEL) {
+  ensureDbReady().then(() => {
     app.listen(PORT, () => {
       console.log(`========================================================================`);
       console.log(` SkillSangam Server running at http://localhost:${PORT}`);
@@ -156,12 +184,11 @@ async function startServer() {
       console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`========================================================================`);
     });
-  } catch (err) {
+  }).catch((err) => {
     console.error('Failed to initialize server:', err);
     process.exit(1);
-  }
+  });
 }
 
-startServer();
-
 export default app;
+

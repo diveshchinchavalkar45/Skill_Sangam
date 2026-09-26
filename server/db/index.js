@@ -44,7 +44,9 @@ export async function getDb() {
 
   // Fallback to local persistent PGlite (Real WASM-based PostgreSQL engine)
   console.log('Initializing local embedded PostgreSQL engine (PGlite)...');
-  const dataDir = path.join(process.env.APPDATA || os.homedir(), '.skillsangam', 'db');
+  const dataDir = process.env.VERCEL
+    ? path.join('/tmp', '.skillsangam', 'db')
+    : path.join(process.env.APPDATA || os.homedir(), '.skillsangam', 'db');
   fs.mkdirSync(dataDir, { recursive: true });
 
   // Clean stale postmaster.pid if present from abrupt shutdown

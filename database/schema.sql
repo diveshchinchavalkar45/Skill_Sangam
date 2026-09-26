@@ -215,6 +215,56 @@ CREATE TABLE IF NOT EXISTS event_participants (
     PRIMARY KEY(event_id, user_id)
 );
 
+-- 18. assignments
+CREATE TABLE IF NOT EXISTS assignments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    course_name TEXT NOT NULL,
+    teacher_name TEXT NOT NULL,
+    institution_name TEXT,
+    education_level TEXT DEFAULT 'college',
+    description TEXT NOT NULL,
+    due_date TIMESTAMPTZ NOT NULL,
+    min_team_size INT DEFAULT 2,
+    max_team_size INT DEFAULT 4,
+    total_students_enrolled INT DEFAULT 40,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 19. assignment_groups
+CREATE TABLE IF NOT EXISTS assignment_groups (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assignment_id UUID NOT NULL REFERENCES assignments(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    leader_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'forming' CHECK (status IN ('forming', 'full', 'submitted')),
+    submission_url TEXT,
+    submission_notes TEXT,
+    submitted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 20. assignment_group_members
+CREATE TABLE IF NOT EXISTS assignment_group_members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_id UUID NOT NULL REFERENCES assignment_groups(id) ON DELETE CASCADE,
+    assignment_id UUID NOT NULL REFERENCES assignments(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_in_group TEXT DEFAULT 'Team Member',
+    joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(assignment_id, user_id)
+);
+
+-- 21. assignment_community_posts
+CREATE TABLE IF NOT EXISTS assignment_community_posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assignment_id UUID NOT NULL REFERENCES assignments(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    post_type TEXT DEFAULT 'discussion' CHECK (post_type IN ('discussion', 'teammate_search', 'doubt', 'announcement')),
+    content TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_user_type ON users(user_type);
@@ -231,3 +281,7 @@ CREATE INDEX IF NOT EXISTS idx_invitations_invitee ON invitations(invitee_id);
 CREATE INDEX IF NOT EXISTS idx_invitations_status ON invitations(status);
 CREATE INDEX IF NOT EXISTS idx_messages_project ON messages(project_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created ON messages(created_at);
+CREATE INDEX IF NOT EXISTS idx_assignments_due ON assignments(due_date);
+CREATE INDEX IF NOT EXISTS idx_asgn_groups_asgn ON assignment_groups(assignment_id);
+CREATE INDEX IF NOT EXISTS idx_asgn_members_user ON assignment_group_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_asgn_posts_asgn ON assignment_community_posts(assignment_id);

@@ -25,6 +25,10 @@ import InvitationsPage from './pages/InvitationsPage';
 import MessagesPage from './pages/MessagesPage';
 import SettingsPage from './pages/SettingsPage';
 
+// Student Academic Assignment & Community Pages
+import AssignmentsPage from './pages/student/AssignmentsPage';
+import AssignmentDetailPage from './pages/student/AssignmentDetailPage';
+
 // Organizer Pages
 import OrganizerDashboardPage from './pages/organizer/OrganizerDashboardPage';
 import OrganizerUsersPage from './pages/organizer/OrganizerUsersPage';
@@ -133,6 +137,24 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Student Assignment & Community Routes */}
+            <Route
+              path="student/assignments"
+              element={
+                <ProtectedRoute>
+                  <AssignmentsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="student/assignments/:id"
+              element={
+                <ProtectedRoute>
+                  <AssignmentDetailPage />
                 </ProtectedRoute>
               }
             />

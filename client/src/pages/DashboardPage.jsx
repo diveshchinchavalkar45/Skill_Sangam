@@ -19,7 +19,11 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Layers
+  Layers,
+  BookOpen,
+  FileCheck,
+  AlertCircle,
+  GraduationCap
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -32,15 +36,17 @@ export default function DashboardPage() {
   const [pendingInvitations, setPendingInvitations] = useState([]);
   const [recommendedCandidates, setRecommendedCandidates] = useState([]);
   const [selectedOwnerProject, setSelectedOwnerProject] = useState(null);
+  const [assignments, setAssignments] = useState([]);
 
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      const [recProjRes, myProjRes, reqRes, invRes] = await Promise.all([
+      const [recProjRes, myProjRes, reqRes, invRes, asgnRes] = await Promise.all([
         api.get('/recommendations/projects?limit=4').catch(() => ({ data: { projects: [] } })),
         api.get(`/users/${user.id}/projects`).catch(() => ({ data: { projects: [] } })),
         api.get('/requests/my').catch(() => ({ data: { requests: [] } })),
-        api.get('/invitations').catch(() => ({ data: { invitations: [] } }))
+        api.get('/invitations').catch(() => ({ data: { invitations: [] } })),
+        api.get('/assignments').catch(() => ({ data: { assignments: [] } }))
       ]);
 
       const myProjs = myProjRes.data?.projects || [];
@@ -48,6 +54,7 @@ export default function DashboardPage() {
       setMyProjects(myProjs);
       setPendingRequests(reqRes.data?.requests || []);
       setPendingInvitations(invRes.data?.invitations || []);
+      setAssignments(asgnRes.data?.assignments || []);
 
       // If user owns a project, fetch candidate recommendations for their first project
       const ownedProject = myProjs.find((p) => p.is_owner);
@@ -171,6 +178,94 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* STUDENT ACADEMIC GROUP ASSIGNMENTS & COMMUNITIES SECTION */}
+      {user?.user_type === 'student' && assignments.length > 0 && (
+        <section className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600 animate-pulse" />
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-brand-600" />
+                  <span>Academic Course Group Assignments & Communities</span>
+                </h2>
+              </div>
+              <p className="text-xs text-slate-500">
+                Teacher-assigned group projects, submission tracker, and student group matching.
+              </p>
+            </div>
+
+            <Link
+              to="/student/assignments"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3.5 py-2 rounded-xl border border-brand-200 transition-all shrink-0"
+            >
+              <span>View All Assignments ({assignments.length})</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {assignments.slice(0, 3).map((a) => (
+              <div
+                key={a.id}
+                className="p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-300 transition-all flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-brand-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                      {a.course_name.split(':')[0]}
+                    </span>
+                    {a.has_submitted ? (
+                      <Badge variant="emerald" size="xs">Submitted</Badge>
+                    ) : a.user_group ? (
+                      <Badge variant="brand" size="xs">In Team</Badge>
+                    ) : (
+                      <Badge variant="amber" size="xs">Need Team</Badge>
+                    )}
+                  </div>
+
+                  <h3 className="font-bold text-xs text-slate-900 line-clamp-2">
+                    {a.title}
+                  </h3>
+                  <div className="text-[11px] text-slate-500">
+                    Instructor: <strong className="text-slate-700">{a.teacher_name}</strong>
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-slate-200/60 text-[11px]">
+                  {/* Progress */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-slate-600">
+                      <span>Submissions</span>
+                      <strong className="text-slate-900">{a.submitted_students_count} / {a.total_students_enrolled || 40} ({a.submission_percentage}%)</strong>
+                    </div>
+                    <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-emerald-500 h-full rounded-full"
+                        style={{ width: `${a.submission_percentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-slate-500 pt-0.5">
+                    <span>{a.total_groups} Groups formed</span>
+                    <span className="text-amber-600 font-bold">{a.open_groups} open teams</span>
+                  </div>
+
+                  <Link
+                    to={`/student/assignments/${a.id}`}
+                    className="w-full mt-2 inline-flex items-center justify-center gap-1.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 font-bold text-[11px] text-slate-800 transition-colors"
+                  >
+                    <span>Open Community & Teams</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* PENDING NOTIFICATIONS (Invitations & Requests) */}
       {(pendingInvitations.some((i) => i.status === 'pending') || pendingRequests.some((r) => r.status === 'pending')) && (

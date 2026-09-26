@@ -13,7 +13,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  BookOpen
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -71,6 +72,18 @@ export default function Navbar() {
                 >
                   <span>Dashboard</span>
                 </Link>
+
+                {user?.user_type === 'student' && (
+                  <Link
+                    to="/student/assignments"
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
+                      isActive('/student/assignments') || location.pathname.startsWith('/student/assignments') ? 'text-brand-600 bg-brand-50/70 font-semibold' : 'hover:text-slate-900 hover:bg-slate-100/70'
+                    }`}
+                  >
+                    <BookOpen className="w-4 h-4 text-brand-600" />
+                    <span>Assignments</span>
+                  </Link>
+                )}
 
                 <Link
                   to="/projects/new"
@@ -252,6 +265,16 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
+              {user?.user_type === 'student' && (
+                <Link
+                  to="/student/assignments"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-brand-600 font-semibold hover:bg-brand-50"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Assignments & Communities</span>
+                </Link>
+              )}
               <Link
                 to="/projects"
                 onClick={() => setMobileMenuOpen(false)}

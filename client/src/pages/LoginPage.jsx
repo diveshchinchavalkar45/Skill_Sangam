@@ -21,8 +21,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      const loggedUser = await login(email, password);
+      if ((!location.state?.from || location.state.from.pathname === '/dashboard') && loggedUser?.user_type === 'student') {
+        navigate('/student/assignments', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setError(err.message || 'Invalid credentials');
     } finally {
@@ -36,8 +40,12 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(demoEmail, 'password123');
-      navigate(from, { replace: true });
+      const loggedUser = await login(demoEmail, 'password123');
+      if (loggedUser?.user_type === 'student') {
+        navigate('/student/assignments', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setError(err.message || 'Demo login failed');
     } finally {

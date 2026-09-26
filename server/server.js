@@ -20,6 +20,7 @@ import invitationRoutes from './routes/invitationRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import organizerRoutes from './routes/organizerRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import assignmentRoutes from './routes/assignmentRoutes.js';
 import { apiLimiter } from './middleware/rateLimit.js';
 
 dotenv.config();
@@ -97,6 +98,7 @@ app.use('/api/invitations', invitationRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/organizer', organizerRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/assignments', assignmentRoutes);
 
 // Static client files for production
 const clientDistPath = path.resolve(__dirname, '../client/dist');

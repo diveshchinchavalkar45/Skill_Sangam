@@ -948,7 +948,169 @@ export async function seed() {
     }
   }
 
+  // 10. ACADEMIC COURSE GROUP ASSIGNMENTS & COMMUNITIES
+  const asgn1Res = await query(`
+    INSERT INTO assignments (
+      title, course_name, teacher_name, institution_name, education_level,
+      description, due_date, min_team_size, max_team_size, total_students_enrolled
+    ) VALUES (
+      'Distributed Cloud Microservices & Scalable Caching Architecture',
+      'CS402: Cloud Computing & Systems',
+      'Prof. Sneha Deshmukh',
+      'IIT Delhi / Engineering Campuses',
+      'college',
+      'Build a high-throughput microservices architecture with automated failover, PostgreSQL connection pooling, Redis caching, and rate limiting. Teams of 2-4 must submit a production GitHub repository with architecture diagrams, Docker Compose configuration, and benchmark results.',
+      NOW() + INTERVAL '12 days',
+      2, 4, 45
+    ) RETURNING id
+  `);
+  const asgn1Id = asgn1Res.rows[0].id;
+
+  const asgn2Res = await query(`
+    INSERT INTO assignments (
+      title, course_name, teacher_name, institution_name, education_level,
+      description, due_date, min_team_size, max_team_size, total_students_enrolled
+    ) VALUES (
+      'Computer Vision & Neural Network Defect Detection',
+      'AI301: Deep Learning & Machine Perception',
+      'Dr. Arvind Kulkarni',
+      'IIT Bombay & Partner Institutions',
+      'college',
+      'Train a convolutional neural network or YOLO architecture for visual quality defect inspection. Deliverables include model checkpoint, comparative F1-score evaluation metrics, and an interactive Gradio/Streamlit inference demo.',
+      NOW() + INTERVAL '8 days',
+      2, 3, 38
+    ) RETURNING id
+  `);
+  const asgn2Id = asgn2Res.rows[0].id;
+
+  const asgn3Res = await query(`
+    INSERT INTO assignments (
+      title, course_name, teacher_name, institution_name, education_level,
+      description, due_date, min_team_size, max_team_size, total_students_enrolled
+    ) VALUES (
+      'Full-Stack Collaborative Team Kanban & Sprint Manager',
+      'SE201: Agile Software Engineering',
+      'Dr. Rajesh Nair',
+      'National Universities & Colleges',
+      'college',
+      'Construct a full-stack real-time collaboration tool featuring optimistic UI updates, JWT authentication, and automated GitHub Actions CI/CD workflows.',
+      NOW() + INTERVAL '18 days',
+      2, 4, 52
+    ) RETURNING id
+  `);
+  const asgn3Id = asgn3Res.rows[0].id;
+
+  // Groups for Assignment 1
+  const rohanUser = userIds['rohan.verma@nit.ac.in'] || userIds['student@skillsangam.com'];
+  const vikramUser = userIds['vikram.aditya@dtu.ac.in'];
+  const aaravUser = userIds['student@skillsangam.com'];
+  const priyaUser = userIds['founder@skillsangam.com'];
+  const nehaUser = userIds['neha.gupta@vit.ac.in'];
+  const poojaUser = userIds['pooja.patel@vjti.ac.in'] || userIds['ananya.sen@iiit.ac.in'];
+  const kabirUser = userIds['kabir.singh@iitb.ac.in'];
+  const snehaUser = userIds['sneha.kulkarni@coep.ac.in'];
+
+  if (rohanUser && vikramUser) {
+    // Group 1: Forming (3/4 members)
+    const grp1Res = await query(`
+      INSERT INTO assignment_groups (assignment_id, name, leader_id, status)
+      VALUES ($1, 'Team CloudNinjas', $2, 'forming')
+      RETURNING id
+    `, [asgn1Id, rohanUser]);
+    const grp1Id = grp1Res.rows[0].id;
+
+    await query(`
+      INSERT INTO assignment_group_members (group_id, assignment_id, user_id, role_in_group)
+      VALUES ($1, $2, $3, 'Architecture & Backend'),
+             ($1, $2, $4, 'Docker & DevOps')
+    `, [grp1Id, asgn1Id, rohanUser, vikramUser]);
+
+    if (poojaUser) {
+      await query(`
+        INSERT INTO assignment_group_members (group_id, assignment_id, user_id, role_in_group)
+        VALUES ($1, $2, $3, 'Frontend Integration')
+      `, [grp1Id, asgn1Id, poojaUser]);
+    }
+  }
+
+  if (priyaUser && kabirUser) {
+    // Group 2: Submitted (Full 4/4 members)
+    const grp2Res = await query(`
+      INSERT INTO assignment_groups (
+        assignment_id, name, leader_id, status, submission_url, submission_notes, submitted_at
+      )
+      VALUES (
+        $1, 'Team ByteForce', $2, 'submitted',
+        'https://github.com/byteforce/distributed-cloud-system',
+        'Completed full rubric including Redis cluster caching and Locust load testing report with 10k req/sec.',
+        NOW() - INTERVAL '1 day'
+      )
+      RETURNING id
+    `, [asgn1Id, priyaUser]);
+    const grp2Id = grp2Res.rows[0].id;
+
+    await query(`
+      INSERT INTO assignment_group_members (group_id, assignment_id, user_id, role_in_group)
+      VALUES ($1, $2, $3, 'Team Lead & API Design'),
+             ($1, $2, $4, 'Database Specialist')
+    `, [grp2Id, asgn1Id, priyaUser, kabirUser]);
+  }
+
+  // Groups for Assignment 2
+  if (aaravUser && nehaUser) {
+    // Group 3: Forming (Aarav is leader)
+    const grp3Res = await query(`
+      INSERT INTO assignment_groups (assignment_id, name, leader_id, status)
+      VALUES ($1, 'NeuralVision Pioneers', $2, 'forming')
+      RETURNING id
+    `, [asgn2Id, aaravUser]);
+    const grp3Id = grp3Res.rows[0].id;
+
+    await query(`
+      INSERT INTO assignment_group_members (group_id, assignment_id, user_id, role_in_group)
+      VALUES ($1, $2, $3, 'Model Training & ML Pipeline'),
+             ($1, $2, $4, 'Dataset Preprocessing')
+    `, [grp3Id, asgn2Id, aaravUser, nehaUser]);
+  }
+
+  // Groups for Assignment 3
+  if (snehaUser && vikramUser) {
+    const grp4Res = await query(`
+      INSERT INTO assignment_groups (assignment_id, name, leader_id, status)
+      VALUES ($1, 'AgileDev Squad', $2, 'forming')
+      RETURNING id
+    `, [asgn3Id, snehaUser]);
+    const grp4Id = grp4Res.rows[0].id;
+
+    await query(`
+      INSERT INTO assignment_group_members (group_id, assignment_id, user_id, role_in_group)
+      VALUES ($1, $2, $3, 'Scrum Master & Full Stack'),
+             ($1, $2, $4, 'CI/CD Pipeline Lead')
+    `, [grp4Id, asgn3Id, snehaUser, vikramUser]);
+  }
+
+  // Community discussion posts for Assignment 1
+  if (rohanUser) {
+    await query(`
+      INSERT INTO assignment_community_posts (assignment_id, user_id, post_type, content, created_at)
+      VALUES ($1, $2, 'teammate_search', 'Hey everyone! We have 1 open spot in Team CloudNinjas for someone experienced with Redis caching or load testing. Reach out if interested!', NOW() - INTERVAL '2 days')
+    `, [asgn1Id, rohanUser]);
+  }
+  if (aaravUser) {
+    await query(`
+      INSERT INTO assignment_community_posts (assignment_id, user_id, post_type, content, created_at)
+      VALUES ($1, $2, 'doubt', 'Does the rubric require Docker Compose v2 syntax, or is Helm / Kubernetes deployment acceptable for bonus credit?', NOW() - INTERVAL '1 day')
+    `, [asgn1Id, aaravUser]);
+  }
+  if (vikramUser) {
+    await query(`
+      INSERT INTO assignment_community_posts (assignment_id, user_id, post_type, content, created_at)
+      VALUES ($1, $2, 'discussion', 'Prof. Deshmukh confirmed in office hours that Helm charts qualify for the 5-point bonus!', NOW() - INTERVAL '18 hours')
+    `, [asgn1Id, vikramUser]);
+  }
+
   console.log('✓ Seeded join requests, invitations, project members, messages, and event participants.');
+  console.log('✓ Seeded academic group assignments, groups, submissions, and assignment communities.');
   console.log('========================================================================');
   console.log('SkillSangam database seeded successfully!');
   console.log('Demo accounts (Password: password123):');

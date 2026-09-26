@@ -96,6 +96,32 @@ export default function LandingPage() {
           )}
         </div>
 
+        {/* HERO VISUAL BANNER WITH JUGGLING SKILLS ILLUSTRATION */}
+        <div className="relative mx-auto max-w-3xl rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 bg-gradient-to-tr from-slate-900 via-[#105f74] to-slate-900 group my-8">
+          <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden flex items-center justify-center">
+            <img 
+              src="/skill-bg.png" 
+              alt="SkillSangam - Multi-skill Balancing and Team Synergy" 
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-95"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent" />
+            <div className="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-white">
+              <div className="text-left">
+                <span className="text-[10px] sm:text-xs uppercase font-black tracking-widest text-teal-300 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-300" />
+                  <span>Interdisciplinary Skill Balance</span>
+                </span>
+                <h3 className="text-sm sm:text-base font-black text-white">
+                  Balance Every Talent. Build Championship Teams.
+                </h3>
+              </div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold text-white border border-white/30">
+                12+ Skills & Roles
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* DEMO FAST-SWITCH PANEL */}
         {!isAuthenticated && (
           <div className="bg-slate-100/80 border border-slate-200 p-4 rounded-2xl max-w-2xl mx-auto shadow-sm">

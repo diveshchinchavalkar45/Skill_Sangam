@@ -32,24 +32,6 @@ export default function AboutPage() {
         <RoleSelectionGateway title="Get Started: Select Your Role to Enter Your Profile" />
       </div>
 
-      {/* Visual Showcase: Balancing Skills */}
-      <div className="rounded-3xl overflow-hidden shadow-xl border border-slate-200/90 bg-gradient-to-tr from-slate-900 via-[#105f74] to-slate-900">
-        <div className="relative aspect-[16/9] sm:aspect-[24/9] w-full overflow-hidden flex items-center justify-center">
-          <img 
-            src="/skill-bg.png" 
-            alt="The Balancing Act of Interdisciplinary Skills" 
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
-          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-white">
-            <div>
-              <span className="text-xs uppercase font-extrabold tracking-widest text-teal-300">The Power of Skill Synthesis</span>
-              <h3 className="text-base sm:text-lg font-black text-white">From Juggling Solo to Assembling an Unbeatable Team</h3>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* The Problem & Solution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-3">

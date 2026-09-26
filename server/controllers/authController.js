@@ -9,6 +9,7 @@ export async function register(req, res) {
       password,
       name,
       userType = 'student',
+      educationLevel = (userType === 'student' ? 'college' : 'not_applicable'),
       instituteOrCompany,
       yearOrExperience,
       location,
@@ -33,13 +34,13 @@ export async function register(req, res) {
 
     const result = await query(
       `INSERT INTO users (
-        email, password_hash, name, user_type,
+        email, password_hash, name, user_type, education_level,
         institute_or_company, year_or_experience,
         location, country, bio, team_preference
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING id, email, name, user_type, institute_or_company, year_or_experience,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING id, email, name, user_type, education_level, institute_or_company, year_or_experience,
                 location, country, bio, profile_image_url, team_preference, created_at, updated_at`,
-      [email.toLowerCase(), passwordHash, name, userType, instituteOrCompany, yearOrExperience, location, country, bio, teamPreference]
+      [email.toLowerCase(), passwordHash, name, userType, educationLevel, instituteOrCompany, yearOrExperience, location, country, bio, teamPreference]
     );
 
     const user = result.rows[0];

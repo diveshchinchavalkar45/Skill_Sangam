@@ -163,7 +163,7 @@ export function calculateMatch(userData, projectData) {
  */
 export async function getUserMatchProfile(userId) {
   const userRes = await query(
-    `SELECT u.id, u.name, u.email, u.user_type, u.institute_or_company,
+    `SELECT u.id, u.name, u.email, u.user_type, u.education_level, u.institute_or_company,
             u.year_or_experience, u.location, u.country, u.bio, u.team_preference,
             u.profile_image_url
      FROM users u WHERE u.id = $1`,

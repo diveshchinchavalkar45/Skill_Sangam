@@ -33,6 +33,7 @@ export default function EditProfilePage() {
     name: '',
     profileImageUrl: '',
     userType: 'student',
+    educationLevel: 'college',
     instituteOrCompany: '',
     yearOrExperience: '',
     location: '',
@@ -73,6 +74,7 @@ export default function EditProfilePage() {
             name: p.name || '',
             profileImageUrl: p.profile_image_url || '',
             userType: p.user_type || 'student',
+            educationLevel: p.education_level || 'college',
             instituteOrCompany: p.institute_or_company || '',
             yearOrExperience: p.year_or_experience || '',
             location: p.location || '',
@@ -280,7 +282,7 @@ export default function EditProfilePage() {
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-sm bg-white"
               >
                 <option value="student">Student</option>
-                <option value="professional">Professional / Mentor</option>
+                <option value="professional">Office Worker / Working Professional</option>
                 <option value="organizer">Organizer</option>
               </select>
             </div>
@@ -301,29 +303,101 @@ export default function EditProfilePage() {
             </div>
           </div>
 
+          {/* Education Level Selector for Students */}
+          {basicInfo.userType === 'student' && (
+            <div className="p-3.5 rounded-2xl bg-brand-50/60 border border-brand-100 space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-900">
+                Education Level *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setBasicInfo({ ...basicInfo, educationLevel: 'school' })}
+                  className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all ${
+                    basicInfo.educationLevel === 'school'
+                      ? 'border-brand-600 bg-white text-brand-700 shadow-sm ring-1 ring-brand-500/30'
+                      : 'border-brand-200/70 hover:bg-white/70 text-slate-700'
+                  }`}
+                >
+                  School (Grades 9-12)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBasicInfo({ ...basicInfo, educationLevel: 'college' })}
+                  className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all ${
+                    basicInfo.educationLevel === 'college'
+                      ? 'border-brand-600 bg-white text-brand-700 shadow-sm ring-1 ring-brand-500/30'
+                      : 'border-brand-200/70 hover:bg-white/70 text-slate-700'
+                  }`}
+                >
+                  College (Undergrad)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBasicInfo({ ...basicInfo, educationLevel: 'university' })}
+                  className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all ${
+                    basicInfo.educationLevel === 'university'
+                      ? 'border-brand-600 bg-white text-brand-700 shadow-sm ring-1 ring-brand-500/30'
+                      : 'border-brand-200/70 hover:bg-white/70 text-slate-700'
+                  }`}
+                >
+                  University (Postgrad/PhD)
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Institute / Company
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'school' && 'School Name'}
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'college' && 'College / Institute'}
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'university' && 'University Name'}
+                {basicInfo.userType === 'professional' && 'Company / Workplace'}
+                {basicInfo.userType === 'organizer' && 'Organization / Club'}
               </label>
               <input
                 type="text"
                 value={basicInfo.instituteOrCompany}
                 onChange={(e) => setBasicInfo({ ...basicInfo, instituteOrCompany: e.target.value })}
-                placeholder="e.g. IIT Delhi / BITS Pilani"
+                placeholder={
+                  basicInfo.userType === 'student' && basicInfo.educationLevel === 'school'
+                    ? 'e.g. Delhi Public School'
+                    : basicInfo.userType === 'student' && basicInfo.educationLevel === 'college'
+                    ? 'e.g. IIT Delhi / BITS Pilani'
+                    : basicInfo.userType === 'student' && basicInfo.educationLevel === 'university'
+                    ? 'e.g. University of Delhi'
+                    : basicInfo.userType === 'professional'
+                    ? 'e.g. Google / Microsoft / Startup'
+                    : 'e.g. ACM Student Chapter'
+                }
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-sm"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Academic Year / Exp
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'school' && 'Class / Grade'}
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'college' && 'Degree & Year'}
+                {basicInfo.userType === 'student' && basicInfo.educationLevel === 'university' && 'Program & Year'}
+                {basicInfo.userType === 'professional' && 'Designation & Experience'}
+                {basicInfo.userType === 'organizer' && 'Organizer Designation'}
               </label>
               <input
                 type="text"
                 value={basicInfo.yearOrExperience}
                 onChange={(e) => setBasicInfo({ ...basicInfo, yearOrExperience: e.target.value })}
-                placeholder="e.g. 3rd Year B.Tech CSE"
+                placeholder={
+                  basicInfo.userType === 'student' && basicInfo.educationLevel === 'school'
+                    ? 'e.g. Class 11 (PCM)'
+                    : basicInfo.userType === 'student' && basicInfo.educationLevel === 'college'
+                    ? 'e.g. 3rd Year B.Tech CSE'
+                    : basicInfo.userType === 'student' && basicInfo.educationLevel === 'university'
+                    ? 'e.g. 1st Year M.Tech AI'
+                    : basicInfo.userType === 'professional'
+                    ? 'e.g. Senior Software Engineer (4 yrs)'
+                    : 'e.g. Lead Organizer'
+                }
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-sm"
               />
             </div>

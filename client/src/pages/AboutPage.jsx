@@ -11,6 +11,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Badge from '../components/common/Badge';
+import RoleSelectionGateway from '../components/common/RoleSelectionGateway';
 
 export default function AboutPage() {
   return (
@@ -24,6 +25,11 @@ export default function AboutPage() {
         <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
           SkillSangam is an AI-powered skill-based team formation platform designed for students and professionals participating in hackathons, academic projects, startups, and innovation sprints.
         </p>
+      </div>
+
+      {/* DIRECT ACCESS ROLE SELECTOR GATEWAY */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-slate-50 to-white border border-slate-200 shadow-sm">
+        <RoleSelectionGateway title="Get Started: Select Your Role to Enter Your Profile" />
       </div>
 
       {/* The Problem & Solution */}

@@ -97,8 +97,16 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-black text-slate-900">{profile.name}</h1>
-                <Badge variant="brand" size="xs" className="uppercase font-bold">
-                  {profile.user_type}
+                <Badge variant={profile.user_type === 'professional' ? 'indigo' : 'brand'} size="xs" className="font-bold">
+                  {profile.user_type === 'student'
+                    ? (profile.education_level === 'school'
+                        ? '🏫 School Student'
+                        : profile.education_level === 'university'
+                        ? '🏛️ University Student'
+                        : '🎓 College Student')
+                    : profile.user_type === 'professional'
+                    ? '💼 Office Worker / Pro'
+                    : '⚡ Hackathon Organizer'}
                 </Badge>
                 <Badge variant="purple" size="xs">
                   {preferenceLabels[profile.team_preference] || 'Open to Both'}

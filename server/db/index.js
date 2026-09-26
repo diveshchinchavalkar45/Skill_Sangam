@@ -114,6 +114,16 @@ export async function initDb() {
   } else {
     await db.query(schemaSql);
   }
+
+  // Idempotent column additions for existing live databases
+  try {
+    if (db.isPGlite) {
+      await db.pgliteInstance.exec(`ALTER TABLE users ADD COLUMN IF NOT EXISTS education_level TEXT DEFAULT 'college';`);
+    } else {
+      await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS education_level TEXT DEFAULT 'college'`);
+    }
+  } catch (_) {}
+
   console.log('Database schema verified successfully.');
 }
 

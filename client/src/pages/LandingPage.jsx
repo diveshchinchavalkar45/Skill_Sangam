@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Badge from '../components/common/Badge';
+import RoleSelectionGateway from '../components/common/RoleSelectionGateway';
 
 export default function LandingPage() {
   const { isAuthenticated, login, showToast } = useAuth();
@@ -125,6 +126,13 @@ export default function LandingPage() {
                 <span className="text-[10px] text-slate-500">Organizer • SIH Innovation Lead</span>
               </button>
             </div>
+          </div>
+        )}
+
+        {/* ROLE SELECTION GATEWAY: STUDENT VS OFFICE WORKER */}
+        {!isAuthenticated && (
+          <div className="mt-12 text-left">
+            <RoleSelectionGateway title="Choose How You Want to Join SkillSangam" />
           </div>
         )}
       </section>

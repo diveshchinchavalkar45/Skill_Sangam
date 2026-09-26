@@ -52,6 +52,7 @@ export async function updateMyProfile(req, res) {
       name,
       profileImageUrl,
       userType,
+      educationLevel,
       instituteOrCompany,
       yearOrExperience,
       location,
@@ -69,15 +70,16 @@ export async function updateMyProfile(req, res) {
         name = COALESCE($2, name),
         profile_image_url = COALESCE($3, profile_image_url),
         user_type = COALESCE($4, user_type),
-        institute_or_company = COALESCE($5, institute_or_company),
-        year_or_experience = COALESCE($6, year_or_experience),
-        location = COALESCE($7, location),
-        country = COALESCE($8, country),
-        bio = COALESCE($9, bio),
-        team_preference = COALESCE($10, team_preference),
+        education_level = COALESCE($5, education_level),
+        institute_or_company = COALESCE($6, institute_or_company),
+        year_or_experience = COALESCE($7, year_or_experience),
+        location = COALESCE($8, location),
+        country = COALESCE($9, country),
+        bio = COALESCE($10, bio),
+        team_preference = COALESCE($11, team_preference),
         updated_at = NOW()
        WHERE id = $1`,
-      [userId, name, profileImageUrl, userType, instituteOrCompany, yearOrExperience, location, country, bio, teamPreference]
+      [userId, name, profileImageUrl, userType, educationLevel, instituteOrCompany, yearOrExperience, location, country, bio, teamPreference]
     );
 
     // Update Skills if provided

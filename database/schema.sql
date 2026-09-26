@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
         CHECK (user_type IN ('student', 'professional', 'organizer')),
     institute_or_company TEXT,
     year_or_experience TEXT,
+    education_level TEXT DEFAULT 'college'
+        CHECK (education_level IN ('school', 'college', 'university', 'not_applicable')),
     location TEXT,
     country TEXT DEFAULT 'India',
     bio TEXT,
